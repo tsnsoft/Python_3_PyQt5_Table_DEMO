@@ -31,74 +31,48 @@ class Main(QDialog):
         # заполняем таблицу случайными числами
         while row < self.tableWidget.rowCount():
             while col < self.tableWidget.columnCount():
-                random_num = randint(0, 101)
+                random_num = randint(0, 100)
                 self.tableWidget.setItem(row, col, QTableWidgetItem(str(random_num)))
-                item = self.tableWidget.item(row, col).text()
                 col += 1
             row += 1
             col = 0
-
-        # находим максимальное число и его координаты
-        # [0] - максимальное число, [1] - строка максимума, [2] - столбец максимума
-        list_information_max_num = find_max(self.tableWidget)
-
-        if not list_information_max_num:
-            self.label_error.setText('Введены неправильные данные!')
-        else:
-            # выводим на кэран информацию о расположении максимального числа
-            self.label_max_el.setText(
-                'Максимальный элемент: ' + str(list_information_max_num[0]) + ' [' +
-                str(list_information_max_num[1]) + ';' + str(list_information_max_num[2]) + ']')
+        self.label_error.setText('')
 
     def solve(self):
         list_information_max_num = find_max(self.tableWidget)
-
         if not list_information_max_num:
             self.label_error.setText('Введены некорректные данные!')
         else:
             self.label_max_el.setText(
                 'Максимальный элемент: ' + str(list_information_max_num[0]) + ' [' +
                 str(list_information_max_num[1]) + ';' + str(list_information_max_num[2]) + ']')
-
+            self.label_error.setText('')
             # -*- решение задания -*-
             row = 0
             col = 0
-
             number_of_units = 0  # количество единиц, стоящих перед нашим числом
             flag = False
-
+            n = 0
             while row < self.tableWidget.rowCount():
                 while col < self.tableWidget.columnCount():
-                    item = self.tableWidget.item(row, col).text()
-                    # три случая:
-                    # 1) элемент равен единице
-                    # 2) элемент равен максимальному числу
-                    #   2.1) максимальный элемент раплолагается в 1-ой ячейке и перед ним нет ячеек
-                    # 3) элемент равен иному числу
-                    if float(item) == 1:
+                    item = float(self.tableWidget.item(row, col).text())
+                    n += 1
+                    if item == 1:
                         number_of_units += 1
                         col += 1
-                    elif float(item) == list_information_max_num[0]:
-                        if row == 0 and col == 0:
-                            self.tableWidget.setItem(row, col, QTableWidgetItem(str(item)))
-                        else:
-                            self.tableWidget.setItem(row, col, QTableWidgetItem(str(number_of_units)))
-
-                        self.label_sum.setText('Сумма единиц перед максимальным элементом: ' + str(number_of_units))
+                    elif item == list_information_max_num[0]:
                         flag = True
                         break
                     else:
-                        self.label_sum.setText('Сумма единиц перед максимальным элементом: 0')
-                        flag = True
-                        break
-
+                        col += 1
                 if flag:
                     break
-
                 row += 1
                 col = 0
-
-            self.label_error.setText('')
+            self.label_sum.setText('Сумма единиц перед максимальным элементом: ' + str(number_of_units))
+            if n - 1 == number_of_units:
+                self.tableWidget.setItem(list_information_max_num[1], list_information_max_num[2],
+                                         QTableWidgetItem(str(number_of_units)))
 
 
 def find_max(table_widget):
@@ -111,16 +85,14 @@ def find_max(table_widget):
 
     row_max_number = 0  # номер строки, в котором находится максимальне число
     col_max_number = 0  # номер столбца, в котором находится максимальне число
-    max_num = float(table_widget.item(row_max_number, col_max_number).text())  # Максимальное значение
-
-    row = 0
-    col = 0
-
     try:
+        max_num = float(table_widget.item(row_max_number, col_max_number).text())  # Максимальное значение
+        row = 0
+        col = 0
         while row < table_widget.rowCount():
             while col < table_widget.columnCount():
                 number = float(table_widget.item(row, col).text())
-                if number > max_num:
+                if number >= max_num:
                     max_num = number
                     row_max_number = row
                     col_max_number = col
@@ -129,7 +101,7 @@ def find_max(table_widget):
             col = 0
         return [max_num, row_max_number, col_max_number]
     except Exception:
-        return None
+            return None
 
 
 def main():
