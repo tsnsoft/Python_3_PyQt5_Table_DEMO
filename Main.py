@@ -73,6 +73,9 @@ class Main(QDialog):
             if n - 1 == number_of_units:
                 self.tableWidget.setItem(list_information_max_num[1], list_information_max_num[2],
                                          QTableWidgetItem(str(number_of_units)))
+            elif number_of_units == self.tableWidget.columnCount() * self.tableWidget.rowCount():
+                self.tableWidget.setItem(list_information_max_num[1], list_information_max_num[2],
+                                         QTableWidgetItem(str(number_of_units-1)))
 
 
 def find_max(table_widget):
