@@ -37,6 +37,8 @@ class Main(QDialog):
             row += 1
             col = 0
         self.label_error.setText('')
+        self.label_max_el.setText('Максимальный элемент: ')
+        self.label_sum.setText('Сумма единиц перед максимальным элементом: ')
 
     def solve(self):
         list_information_max_num = find_max(self.tableWidget)
